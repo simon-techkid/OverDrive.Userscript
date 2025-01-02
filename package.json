@@ -18,11 +18,11 @@
   },
   "homepage": "https://github.com/simon-techkid/OverDrive.Userscript#readme",
   "dependencies": {
-    "@types/tampermonkey": "^5.0.4",
-    "typescript": "^5.7.2"
+    "@types/tampermonkey": "^5.0.4"
   },
   "devDependencies": {
-    "@types/filesaver": "^0.0.30",
-    "@types/jszip": "^3.4.1"
+    "@types/file-saver": "^1.3.0",
+    "jszip": "^3.4.1",
+    "typescript": "^5.7.2"
   }
 }
