@@ -1,0 +1,28 @@
+{
+  "name": "overdrive.userscript",
+  "version": "1.0.0",
+  "description": "",
+  "main": "compiled.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/simon-techkid/OverDrive.Userscript.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/simon-techkid/OverDrive.Userscript/issues"
+  },
+  "homepage": "https://github.com/simon-techkid/OverDrive.Userscript#readme",
+  "dependencies": {
+    "@types/tampermonkey": "^5.0.4",
+    "typescript": "^5.7.2"
+  },
+  "devDependencies": {
+    "@types/filesaver": "^0.0.30",
+    "@types/jszip": "^3.4.1"
+  }
+}

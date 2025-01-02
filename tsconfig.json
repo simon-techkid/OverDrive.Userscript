@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "system",
+    "moduleResolution": "Node",
+    "lib": ["es2017", "dom"],
+    "strict": true,
+    "noImplicitAny": false,
+    "skipLibCheck": true,
+    "outFile": "./dist/script.user.js"
+  },
+  "include": ["src/**/*"]
+}
