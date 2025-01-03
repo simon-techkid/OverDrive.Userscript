@@ -21,20 +21,20 @@
 //import { saveAs } from "file-saver";
 
 (function () {
-    'use strict';
+	'use strict';
 
-    const filenameRegex: RegExp = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
-    const downloadFilename: string = "audiobooks.zip";
-    const autoDelay = 500;
+	const filenameRegex: RegExp = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+	const downloadFilename: string = "audiobooks.zip";
+	const autoDelay = 500;
 
-    function getRandomInt(min: number, max: number): number {
+	function getRandomInt(min: number, max: number): number {
 		// Ensure min is less than or equal to max
-        min = Math.ceil(min);
-        max = Math.floor(max);
+		min = Math.ceil(min);
+		max = Math.floor(max);
 		
 		// Generate random number between min and max (inclusive)
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
+		return Math.floor(Math.random() * (max - min + 1)) + min;
+	}
 
 	// Function to add the "Download MP3 audiobook" buttons
 	function addAudiobookDownloads(): void {
@@ -83,166 +83,166 @@
 	}
 
 	// Construct a download URL for an audiobook with the given Media ID
-    function constructDownloadUrl(mediaId: string): string {
-        const baseUrl: string = window.location.origin; // Get the library OverDrive URL from the window
-        return `${baseUrl}/media/download/audiobook-mp3/${mediaId}`;
-    }
+	function constructDownloadUrl(mediaId: string): string {
+		const baseUrl: string = window.location.origin; // Get the library OverDrive URL from the window
+		return `${baseUrl}/media/download/audiobook-mp3/${mediaId}`;
+	}
 	
 	// Add button for "Download Audiobooks Individually"
 	function addAudiobookDownloadButton(): void {
 		
-        const mediaIds: string[] = Object.values(unsafeWindow.OverDrive.mediaItems)
-            .filter(
-                (item: OverDriveMediaItem) =>
-                    item.type.id === 'audiobook' &&
-                    item.otherFormats.some((format: OverDriveMediaItemType) => format.id === 'audiobook-mp3')
-            )
-            .map((mediaItem: OverDriveMediaItem) => mediaItem.id);
+		const mediaIds: string[] = Object.values(unsafeWindow.OverDrive.mediaItems)
+			.filter(
+				(item: OverDriveMediaItem) =>
+					item.type.id === 'audiobook' &&
+					item.otherFormats.some((format: OverDriveMediaItemType) => format.id === 'audiobook-mp3')
+			)
+			.map((mediaItem: OverDriveMediaItem) => mediaItem.id);
 
-        if (mediaIds.length === 0) return;
+		if (mediaIds.length === 0) return;
 
 		// Method to get links from the buttons on the page
 		//const downloadLinkButtons = '.loan-button-nonkindle.button.radius.primary.downloadButton.script-added';
-        //const downloadLinks = Array.from(document.querySelectorAll(downloadLinkButtons)).map(btn => btn.href).filter(url => url);
-        const downloadLinks: string[] = mediaIds.map(constructDownloadUrl).filter(Boolean);
+		//const downloadLinks = Array.from(document.querySelectorAll(downloadLinkButtons)).map(btn => btn.href).filter(url => url);
+		const downloadLinks: string[] = mediaIds.map(constructDownloadUrl).filter(Boolean);
 
-        addSidebarButton(
-            'master-download-individual',
-            `Download ${downloadLinks.length} Audiobooks Individually`,
-            (e) => { // click event for the "Download Audiobooks Individually" button
-                e.preventDefault();
-                for (const url of downloadLinks) {
-                    const delay: number = getRandomInt(100, 200); // Random delay between 100 and 200 ms
-                    setTimeout(() => window.open(url, '_blank'), delay);
-                }
-            }
-        );
-    }
+		addSidebarButton(
+			'master-download-individual',
+			`Download ${downloadLinks.length} Audiobooks Individually`,
+			(e) => { // click event for the "Download Audiobooks Individually" button
+				e.preventDefault();
+				for (const url of downloadLinks) {
+					const delay: number = getRandomInt(100, 200); // Random delay between 100 and 200 ms
+					setTimeout(() => window.open(url, '_blank'), delay);
+				}
+			}
+		);
+	}
 	
 	// Add button for "Download Audiobooks to ZIP"
 	async function addAudiobookDownloadButtonZip(): Promise<void> {
-        
+		
 		const mediaIds: string[] = Object.values(unsafeWindow.OverDrive.mediaItems)
-            .filter(
-                (item: OverDriveMediaItem) =>
-                    item.type.id === 'audiobook' &&
-                    item.otherFormats.some((format: OverDriveMediaItemType) => format.id === 'audiobook-mp3')
-            )
-            .map((mediaItem: OverDriveMediaItem) => mediaItem.id);
+			.filter(
+				(item: OverDriveMediaItem) =>
+					item.type.id === 'audiobook' &&
+					item.otherFormats.some((format: OverDriveMediaItemType) => format.id === 'audiobook-mp3')
+			)
+			.map((mediaItem: OverDriveMediaItem) => mediaItem.id);
 
-        if (mediaIds.length === 0) return; // No loans, don't add the button
+		if (mediaIds.length === 0) return; // No loans, don't add the button
 
 		// Method to get links from the buttons on the page
 		//const downloadLinkButtons = '.loan-button-nonkindle.button.radius.primary.downloadButton.script-added';
-        //const downloadLinks = Array.from(document.querySelectorAll(downloadLinkButtons)).map(btn => btn.href).filter(url => url);
-        const downloadLinks: string[] = mediaIds.map(constructDownloadUrl).filter(Boolean);
+		//const downloadLinks = Array.from(document.querySelectorAll(downloadLinkButtons)).map(btn => btn.href).filter(url => url);
+		const downloadLinks: string[] = mediaIds.map(constructDownloadUrl).filter(Boolean);
 
-        addSidebarButton(
-            'master-download-zip',
-            `Download ${downloadLinks.length} Audiobooks to ZIP`,
-            async (e) => { // click event for the "Download Audiobooks to ZIP" button
-                e.preventDefault();
+		addSidebarButton(
+			'master-download-zip',
+			`Download ${downloadLinks.length} Audiobooks to ZIP`,
+			async (e) => { // click event for the "Download Audiobooks to ZIP" button
+				e.preventDefault();
 
-                const zip = new JSZip();
-                const promises: Promise<void>[] = downloadLinks.map((url, index) =>
-                    new Promise<void>((resolve, reject) => {
-                        GM_xmlhttpRequest({
-                            method: 'GET',
-                            url,
-                            responseType: 'blob',
-                            onload: (response) => {
-                                if (response.status === 200) {
-                                    const blob: Blob = response.response as Blob;
-                                    let fileName: string = `audiobook_${index + 1}.odm`;
+				const zip = new JSZip();
+				const promises: Promise<void>[] = downloadLinks.map((url, index) =>
+					new Promise<void>((resolve, reject) => {
+						GM_xmlhttpRequest({
+							method: 'GET',
+							url,
+							responseType: 'blob',
+							onload: (response) => {
+								if (response.status === 200) {
+									const blob: Blob = response.response as Blob;
+									let fileName: string = `audiobook_${index + 1}.odm`;
 
-                                    const matches: RegExpExecArray | null = filenameRegex.exec(response.responseHeaders);
-                                    if (matches?.[1]) {
-                                        fileName = matches[1].replace(/['"]/g, '').trim();
-                                    }
+									const matches: RegExpExecArray | null = filenameRegex.exec(response.responseHeaders);
+									if (matches?.[1]) {
+										fileName = matches[1].replace(/['"]/g, '').trim();
+									}
 
-                                    zip.file(fileName, blob);
-                                    resolve();
-                                } else {
-                                    reject(new Error(`Failed to download ${url}: ${response.statusText}`));
-                                }
-                            },
-                            onerror: (error) => {
-                                reject(new Error(`Network error: ${(error as any)?.message || "Unknown error"}`));
-                            },
-                        });
-                    })
-                );
+									zip.file(fileName, blob);
+									resolve();
+								} else {
+									reject(new Error(`Failed to download ${url}: ${response.statusText}`));
+								}
+							},
+							onerror: (error) => {
+								reject(new Error(`Network error: ${(error as any)?.message || "Unknown error"}`));
+							},
+						});
+					})
+				);
 
-                try {
-                    await Promise.all(promises);
-                    const content: Blob = await zip.generateAsync({ type: 'blob' }) as Blob;
-                    saveAs(content, downloadFilename);
-                } catch (error) {
-                    console.error('Error downloading audiobooks:', error);
-                }
-            }
-        );
-    }
+				try {
+					await Promise.all(promises);
+					const content: Blob = await zip.generateAsync({ type: 'blob' }) as Blob;
+					saveAs(content, downloadFilename);
+				} catch (error) {
+					console.error('Error downloading audiobooks:', error);
+				}
+			}
+		);
+	}
 	
 	function addAudiobookReturnButton(): void {
-        const mediaIdsPath: string = `.button.secondary.radius.od-format-button.loan-button-nonkindle.primary.downloadButton.script-added[data-format-id="audiobook-mp3"][data-media-id]`;
+		const mediaIdsPath: string = `.button.secondary.radius.od-format-button.loan-button-nonkindle.primary.downloadButton.script-added[data-format-id="audiobook-mp3"][data-media-id]`;
 		const mediaIds: string[] = Array.from(
-            document.querySelectorAll<HTMLAnchorElement>(mediaIdsPath)
-        ).map((loan) => loan.getAttribute('data-media-id')!);
+			document.querySelectorAll<HTMLAnchorElement>(mediaIdsPath)
+		).map((loan) => loan.getAttribute('data-media-id')!);
 
-        if (mediaIds.length === 0) return; // No loans, don't add the button
+		if (mediaIds.length === 0) return; // No loans, don't add the button
 
-        addSidebarButton('audiobook-return', `Return ${mediaIds.length} Audiobooks`, () => {
-            returnLoans(mediaIds);
-        });
-    }
+		addSidebarButton('audiobook-return', `Return ${mediaIds.length} Audiobooks`, () => {
+			returnLoans(mediaIds);
+		});
+	}
 
-    function addLoanReturnButton(): void {
-        const mediaIds: string[] = Object.keys(unsafeWindow.OverDrive.mediaItems);
+	function addLoanReturnButton(): void {
+		const mediaIds: string[] = Object.keys(unsafeWindow.OverDrive.mediaItems);
 
-        if (mediaIds.length === 0) return; // No loans, don't add the button
+		if (mediaIds.length === 0) return; // No loans, don't add the button
 
-        addSidebarButton('master-return', `Return ${mediaIds.length} Loans`, () => {
-            returnLoans(mediaIds);
-        });
-    }
+		addSidebarButton('master-return', `Return ${mediaIds.length} Loans`, () => {
+			returnLoans(mediaIds);
+		});
+	}
 
-    function addSidebarButton(className: string, buttonTitle: string, event: (e: MouseEvent) => void): void {
-        const menu: Element | null = document.querySelector('.account-menu');
-        
-        if (!menu || menu.querySelector(`.${className}`)) {
-            if (!menu) console.log('Account menu not found.');
+	function addSidebarButton(className: string, buttonTitle: string, event: (e: MouseEvent) => void): void {
+		const menu: Element | null = document.querySelector('.account-menu');
+		
+		if (!menu || menu.querySelector(`.${className}`)) {
+			if (!menu) console.log('Account menu not found.');
 
-            return; // Skip if already added or not found
-        }
+			return; // Skip if already added or not found
+		}
 
-        const masterLi: HTMLLIElement = document.createElement('li');
-        const masterButton: HTMLAnchorElement = document.createElement('a');
-        masterButton.href = '#';
-        masterButton.className = `secondary-color-hover contrast ${className}`;
-        masterButton.textContent = buttonTitle;
-        masterButton.addEventListener('click', event);
+		const masterLi: HTMLLIElement = document.createElement('li');
+		const masterButton: HTMLAnchorElement = document.createElement('a');
+		masterButton.href = '#';
+		masterButton.className = `secondary-color-hover contrast ${className}`;
+		masterButton.textContent = buttonTitle;
+		masterButton.addEventListener('click', event);
 
-        masterLi.appendChild(masterButton);
-        menu.appendChild(masterLi);
-    }
+		masterLi.appendChild(masterButton);
+		menu.appendChild(masterLi);
+	}
 
 	// https://greasyfork.org/en/scripts/402911-return-every-book-to-overdrive
-    function returnLoans(mediaIds: string[], delayTime: number = autoDelay): void {
-        for (const id of mediaIds) {
-            setTimeout(() => unsafeWindow.ajax.returnTitle(id), delayTime);
-        }
-    }
+	function returnLoans(mediaIds: string[], delayTime: number = autoDelay): void {
+		for (const id of mediaIds) {
+			setTimeout(() => unsafeWindow.ajax.returnTitle(id), delayTime);
+		}
+	}
 
-    window.addEventListener(
-        'load',
-        () => {
-            addAudiobookDownloads();
-            addAudiobookDownloadButton();
-            addAudiobookDownloadButtonZip();
-            addAudiobookReturnButton();
-            addLoanReturnButton();
-        },
-        false
-    );
+	window.addEventListener(
+		'load',
+		() => {
+			addAudiobookDownloads();
+			addAudiobookDownloadButton();
+			addAudiobookDownloadButtonZip();
+			addAudiobookReturnButton();
+			addLoanReturnButton();
+		},
+		false
+	);
 })();
